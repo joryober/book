@@ -5,6 +5,8 @@ function Book(title, author, pages, read){
     this.author = author;
     this.pages = pages;
     this.read = read;
+    
+    
 
     let readStatus = read ? "read" : "not read yet";
 
@@ -47,25 +49,96 @@ let addBookToLibrary = () => {
 }
 
 let render = () => {
+    let container = document.querySelector(".container");
     let libraryDiv = document.querySelector('.lib');
+    container.removeChild(libraryDiv);
+    libraryDiv = document.createElement('div');
+    libraryDiv.classList.add("lib")
+    container.appendChild(libraryDiv);
+
+    // container.appendChild(libraryDiv);
+    // container.removeChild(libraryDiv);
+    // container.appendChild(libraryDiv);
+    
     myLibrary.forEach(book => {
-        let container = document.querySelector(".container");
         let bookDiv = document.createElement('div')
         for (let[key, value] of Object.entries(book)){
             if (key == "info") break;
             let bookElement = document.createElement('h4');
             bookElement.textContent = `${key}: ${value}`.toUpperCase();
             bookDiv.appendChild(bookElement);
+
+            if (key == "read") {
+            let removeBtn = document.createElement("button");
+            removeBtn.textContent = "remove";
+            removeBtn.classList.add("remove")
+            bookDiv.appendChild(removeBtn);
+            
+            }
         }
-        bookDiv.style.cssText = "margin: 10px; border: thick solid #0000FF"
+        bookDiv.style.cssText = "margin: 10px; border: thick solid #0000FF";
+        bookDiv.classList.add("book");
         libraryDiv.appendChild(bookDiv);
     })
+
+    // go through remove buttons, add functionality
+    let removeBtns = document.querySelectorAll(".remove");
+    // removeBtns.forEach(btn => {
+    //     btn.addEventListener("click", () => {
+    //         console.log(btn.parentNode.textContent);
+    //         btn.parentNode.parentNode.removeChild(btn.parentNode);
+    //     })
+    // })
+    for(let i=0; i<removeBtns.length; i++){
+        removeBtns[i].addEventListener("click", () => {
+            removeBtns[i].parentNode.parentNode.removeChild(removeBtns[i].parentNode);
+            for (let j=0; j<myLibrary.length; j++){
+                myLibrary[j]["index"] = j;
+            }
+            
+            
+            myLibrary = (myLibrary.filter(book => {
+                return book["index"] !== i;
+            }))
+            console.log("remove:");
+            console.log(myLibrary);
+            for (let j=0; j<myLibrary.length; j++){
+                myLibrary[j]["index"] = j;
+            }
+            
+        })
+
+    }
+    
+    
     
 }
 
 let newBookBtn = document.querySelector(".new-book");
 newBookBtn.addEventListener("click", () => {
+
     addBookToLibrary();
-    render();
+    //give all books indicies
+    for (let i=0; i<myLibrary.length; i++){
+        myLibrary[i]["index"] = i;
+    }
+    let removeBtns = document.querySelectorAll(".remove");
+    for(let i=0; i<removeBtns.length; i++){
+        removeBtns[i].addEventListener("click", () => {
+            removeBtns[i].parentNode.parentNode.removeChild(removeBtns[i].parentNode);
+            for (let j=0; j<myLibrary.length; j++){
+                myLibrary[j]["index"] = j;
+            }
+            myLibrary = myLibrary.filter(book => {
+                book["index"] != i;
+            })
+            for (let j=0; j<myLibrary.length; j++){
+                myLibrary[j]["index"] = j;
+            }
+        })
+    }
+    render();  
+    console.log("add:");
+    console.log(myLibrary);
 });
 
